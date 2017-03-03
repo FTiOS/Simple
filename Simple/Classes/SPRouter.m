@@ -23,4 +23,18 @@
     
 }
 
+
++ (void)openUrl:(NSString *)url{
+    SPIntent *intent = [[SPIntent alloc]initWithUrl:url];
+    
+}
++ (void)startActivity:(SPIntent *)intent{
+}
++ (void)startService:(SPIntent *)intent{
+}
+
++ (void) startIntent:(SPIntent *)intent{
+    
+}
+
 @end

@@ -10,7 +10,4 @@
 
 @interface NSObject (SPRouter)
 
-
-
-
 @end

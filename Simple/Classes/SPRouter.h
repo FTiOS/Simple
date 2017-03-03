@@ -8,6 +8,8 @@
 
 #import <Foundation/Foundation.h>
 
+#import "SPIntent.h"
+
 @interface SPRouter : NSObject
 
 /**
@@ -16,6 +18,10 @@
  *
  **/
 + (void)initSDKEnviromentWithComplection:(void (^)(void))complection;
+
++ (void)openUrl:(NSString *)url;
++ (void)startActivity:(SPIntent *)intent;
++ (void)startService:(SPIntent *)intent;
 
 
 @end
