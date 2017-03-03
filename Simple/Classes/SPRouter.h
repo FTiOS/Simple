@@ -19,9 +19,7 @@
  **/
 + (void)initSDKEnviromentWithComplection:(void (^)(void))complection;
 
-+ (void)openUrl:(NSString *)url;
-+ (void)startActivity:(SPIntent *)intent;
-+ (void)startService:(SPIntent *)intent;
-
++ (void)start:(SPIntent *)intent;
++ (void)finish:(SPIntent *)intent;
 
 @end

@@ -7,7 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "SPIntent.h"
 
 @interface NSObject (SPRouter)
+
+@property (nonatomic,strong)SPIntent *intent;
 
 @end
