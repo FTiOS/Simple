@@ -20,9 +20,9 @@ typedef NS_ENUM(NSInteger,ModuleSource) {
 
 @interface SPUrlMap : NSMutableDictionary
 
-@property (nonatomic,strong) NSMutableArray *localMap;//本地映射
-@property (nonatomic,strong) NSMutableArray *netMap;//网络映射
-@property (nonatomic,strong) NSMutableArray *tempMap;//代码临时设置映射
+@property (nonatomic,strong) NSMutableDictionary *localMap;//本地映射
+@property (nonatomic,strong) NSMutableDictionary *netMap;//网络映射
+@property (nonatomic,strong) NSMutableDictionary *tempMap;//代码临时设置映射
 
 +(instancetype)shareMap;
 

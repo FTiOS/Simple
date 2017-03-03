@@ -39,7 +39,6 @@ TODO: Add long description of the pod here.
   # s.public_header_files = 'Pod/Classes/**/*.h'
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'AFNetworking', '~> 3.1.0'
-  s.dependency 'JSPatch', '~> 1.0'
-  s.dependency 'weex', '~> 2.3'
-  s.dependency 'Cordova', '~> 4.1.1'
+  s.dependency 'Aspects', '~> 1.4.1'
+
 end

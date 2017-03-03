@@ -30,7 +30,7 @@ typedef NS_ENUM(NSInteger,ActivityType) {
 };
 
 typedef BOOL(^PreCaller)(SPIntent *intent);//预先执行的回调
-typedef void(^SufCaller)(SPIntent *intent,NSError *error);//完成意图后的回调
+typedef void(^SufCaller)(SPIntent *intent,NSError *error,NSInteger resultCode);//完成意图后的回调
 
 @property (nonatomic,assign) Type type;//意图类型
 @property (nonatomic,assign) ActivityType actType;//跳转类型

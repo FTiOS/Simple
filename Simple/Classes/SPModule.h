@@ -8,8 +8,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "SPService.h"
+#import "SPIntent.h"
+
 @interface SPModule : NSObject
 
-
+-(UIViewController *)activityHanldeWithIntent:(SPIntent *)intent;
+-(SPService *)serviceRunWithIntent:(SPIntent *)intent;
 
 @end

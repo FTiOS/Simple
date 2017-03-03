@@ -11,6 +11,8 @@
 #import "SPUrlMap.h"
 #import "SPModule.h"
 
+#import "SPService.h"
+#import "SPViewController.h"
 
 @interface SPRouter ()
 
@@ -34,19 +36,7 @@
     
 }
 
-
-+ (void)openUrl:(NSString *)url{
-    SPIntent *intent = [[SPIntent alloc]initWithUrl:url];
-    
-}
-
-+ (void)startActivity:(SPIntent *)intent{
-}
-+ (void)startService:(SPIntent *)intent{
-    
-}
-
-+ (void) startIntent:(SPIntent *)intent{
++ (void)start:(SPIntent *)intent{
     SPModuleModel *model = [[SPRouter shareSPRouter].urlMap moduleModleForKey:intent.URL.absoluteString];
     if (model.moduleClass) {
         id module = [[model.moduleClass alloc]init];
@@ -54,11 +44,11 @@
             SPModule *spModule = (SPModule *)module;
             switch (intent.type) {
                 case Service:{
-                    
+                    UIViewController *viewc = [spModule serviceRunWithIntent:intent];
                 }
                     break;
                 case Activity:{
-                    
+                    SPService *service = [spModule activityHanldeWithIntent:intent];
                 }
                     break;
                 default:{
@@ -70,7 +60,7 @@
     }
 }
 
--(SPUrlMap *)urlMap{
+- (SPUrlMap *)urlMap{
     if (!_urlMap) {
         _urlMap = [SPUrlMap shareMap];
     }

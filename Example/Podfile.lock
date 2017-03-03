@@ -1,5 +1,23 @@
 PODS:
-  - Simple (0.1.0)
+  - AFNetworking (3.1.0):
+    - AFNetworking/NSURLSession (= 3.1.0)
+    - AFNetworking/Reachability (= 3.1.0)
+    - AFNetworking/Security (= 3.1.0)
+    - AFNetworking/Serialization (= 3.1.0)
+    - AFNetworking/UIKit (= 3.1.0)
+  - AFNetworking/NSURLSession (3.1.0):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (3.1.0)
+  - AFNetworking/Security (3.1.0)
+  - AFNetworking/Serialization (3.1.0)
+  - AFNetworking/UIKit (3.1.0):
+    - AFNetworking/NSURLSession
+  - Aspects (1.4.1)
+  - Simple (0.1.0):
+    - AFNetworking (~> 3.1.0)
+    - Aspects (~> 1.4.1)
 
 DEPENDENCIES:
   - Simple (from `../`)
@@ -9,7 +27,9 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  Simple: '084ae43c08bfbff47a3aec9505578a19f3e12321'
+  AFNetworking: 5e0e199f73d8626b11e79750991f5d173d1f8b67
+  Aspects: 7595ba96a6727a58ebcbfc954497fc5d2fdde546
+  Simple: bb310ebddb6fa6ea118a17451e0ac09a37e8b393
 
 PODFILE CHECKSUM: 2a053fd51a8fb3a79cc6925b464d58f11f962d13
 
