@@ -9,10 +9,12 @@
 #import "SPRouter.h"
 
 #import "SPUrlMap.h"
-#import "SPModule.h"
+#import "SPUIManager.h"
 
+#import "SPModule.h"
 #import "SPService.h"
-#import "SPViewController.h"
+
+#import "NSObject+SPRouter.h"
 
 @interface SPRouter ()
 
@@ -42,13 +44,30 @@
         id module = [[model.moduleClass alloc]init];
         if ([module isKindOfClass:[SPModule class]]) {
             SPModule *spModule = (SPModule *)module;
+            spModule.intent = intent;
             switch (intent.type) {
                 case Service:{
-                    UIViewController *viewc = [spModule serviceRunWithIntent:intent];
+                    SPService *service = [spModule serviceRunWithIntent:intent];
+                    service.intent = intent;
                 }
                     break;
                 case Activity:{
-                    SPService *service = [spModule activityHanldeWithIntent:intent];
+                    UIViewController *activity = [spModule activityHanldeWithIntent:intent];
+                    activity.intent = intent;
+                    switch (intent.actType) {
+                            case Activity_Push:{
+                                [[SPUIManager shareSPRouter]pushViewController:activity];
+                            }
+                            break;
+                            case Activity_Present:{
+                                [[SPUIManager shareSPRouter]presentViewController:activity];
+                            }
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                    
                 }
                     break;
                 default:{
@@ -58,6 +77,10 @@
             }
         }
     }
+}
+
++(void)finish:(SPIntent *)intent{
+    
 }
 
 - (SPUrlMap *)urlMap{

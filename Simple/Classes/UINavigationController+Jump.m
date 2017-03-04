@@ -15,14 +15,18 @@
 +(void)load{
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken,^{
+        
+        //挂钩push方法，传递intent给下一个页面
         NSError *error;
-        [UIViewController aspect_hookSelector:@selector(presentViewController:animated:completion:) withOptions:AspectPositionBefore usingBlock:^(id<AspectInfo>aspectInfo, UIViewController *viewControllerToPresent, BOOL animated) {
+        [UINavigationController aspect_hookSelector:@selector(pushViewController:animated:) withOptions:AspectPositionBefore usingBlock:^(id<AspectInfo>aspectInfo, UIViewController *viewController, BOOL animated) {
             NSObject *instance = aspectInfo.instance;
-            viewControllerToPresent.intent = instance.intent;
+            viewController.intent = instance.intent;
         } error:&error];
         if (error) {
-            NSLog(@"In ViewController cause error:%@",error);
+            NSLog(@"push viewcontroller in navgation cause error:%@",error);
         }
+        
+        
     });
 }
 
