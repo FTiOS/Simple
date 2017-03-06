@@ -49,6 +49,20 @@
                 case Service:{
                     SPService *service = [spModule serviceRunWithIntent:intent];
                     service.intent = intent;
+                    switch (intent.serviceType) {
+                        case Service_Once:{
+                            [service startService];
+                        }
+                            break;
+                        case Service_Bind:{
+                            [service bindService];
+                            [service send:0];
+                        }
+                            break;
+                            
+                        default:
+                            break;
+                    }
                 }
                     break;
                 case Activity:{
@@ -56,11 +70,11 @@
                     activity.intent = intent;
                     switch (intent.actType) {
                             case Activity_Push:{
-                                [[SPUIManager shareSPRouter]pushViewController:activity];
+                                [[SPUIManager shareSPRouter]pushViewController:activity animated:YES];
                             }
                             break;
                             case Activity_Present:{
-                                [[SPUIManager shareSPRouter]presentViewController:activity];
+                                [[SPUIManager shareSPRouter]presentViewController:activity animated:YES];
                             }
                             break;
                             
@@ -80,7 +94,9 @@
 }
 
 +(void)finish:(SPIntent *)intent{
-    
+    if (intent && intent.type == Activity) {
+        intent.sufCaller(intent,nil,0);
+    }
 }
 
 - (SPUrlMap *)urlMap{

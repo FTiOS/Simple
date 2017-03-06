@@ -14,13 +14,22 @@
 @implementation UIViewController (Jump)
 
 +(void)load{
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken,^{
+    static dispatch_once_t onceToken1;
+    dispatch_once(&onceToken1,^{
         
         NSError *error;
         [UIViewController aspect_hookSelector:@selector(presentViewController:animated:completion:) withOptions:AspectPositionBefore usingBlock:^(id<AspectInfo>aspectInfo, UIViewController *viewControllerToPresent, BOOL animated) {
             NSObject *instance = aspectInfo.instance;
             viewControllerToPresent.intent = instance.intent;
+        } error:&error];
+        if (error) {
+            NSLog(@"In ViewController cause error:%@",error);
+        }
+        
+        error = nil;
+        [UIViewController aspect_hookSelector:@selector(addChildViewController:) withOptions:AspectPositionBefore usingBlock:^(id<AspectInfo>aspectInfo, UIViewController *childController) {
+            NSObject *instance = aspectInfo.instance;
+            childController.intent = instance.intent;
         } error:&error];
         if (error) {
             NSLog(@"In ViewController cause error:%@",error);

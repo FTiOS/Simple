@@ -21,30 +21,41 @@
     return _sharedInstance;
 }
 
--(void)pushViewController:(UIViewController *)controller{
+-(void)pushViewController:(UIViewController *)controller animated: (BOOL)flag {
     if (!controller || ![controller isKindOfClass:[UIViewController class]]) {
         return;
     }
     
+    if (!self.topViewController) {
+        return;
+    }
+    
     if (self.topViewController.presentedViewController) {
-        [self.topViewController.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+        [self.topViewController.presentedViewController dismissViewControllerAnimated:NO completion:nil];
     }
     
     if (self.topViewController.navigationController) {
         [self.topViewController.navigationController pushViewController:controller animated:YES];
+    }else{//如果当前展示的页面没有NAVGATIONCONTROLLER的时候
+        UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:controller];
+        [self.topViewController presentViewController:nav animated:flag completion:nil];
     }
 }
 
--(void)presentViewController:(UIViewController *)controller{
+-(void)presentViewController:(UIViewController *)controller animated: (BOOL)flag {
     if (!controller || ![controller isKindOfClass:[UIViewController class]]) {
         return;
     }
     
-    if (self.topViewController.presentedViewController) {
-        [self.topViewController.presentedViewController dismissViewControllerAnimated:YES completion:nil];
+    if (!self.topViewController) {
+        return;
     }
     
-    [self.topViewController presentViewController:controller animated:YES completion:nil];
+    if (self.topViewController.presentedViewController) {
+        [self.topViewController.presentedViewController dismissViewControllerAnimated:NO  completion:nil];
+    }
+    
+    [self.topViewController presentViewController:controller animated:flag completion:nil];
 }
 
 -(UIViewController *)topViewController{
@@ -58,7 +69,7 @@
 //仅仅满足主流TABBAR 和 NAVGATION的框架
 - (UIViewController *)topmostViewController
 {
-    //rootViewController需要是TabBarController,排除正在显示FirstPage的情况
+   
     UIViewController *rootViewContoller = [UIApplication sharedApplication].delegate.window.rootViewController;
     if (!rootViewContoller) {
         return nil;
