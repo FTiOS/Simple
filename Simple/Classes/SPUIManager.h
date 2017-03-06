@@ -15,7 +15,7 @@
 
 + (SPUIManager *)shareSPRouter;
 
--(void)pushViewController:(UIViewController *)controller;
--(void)presentViewController:(UIViewController *)controller;
+-(void)pushViewController:(UIViewController *)controller animated: (BOOL)flag ;
+-(void)presentViewController:(UIViewController *)controller animated: (BOOL)flag ;
 
 @end
