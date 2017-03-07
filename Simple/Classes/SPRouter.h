@@ -19,7 +19,7 @@
  **/
 + (void)initSDKEnviromentWithComplection:(void (^)(void))complection;
 
-+ (void)start:(SPIntent *)intent;
++ (UIViewController *)start:(SPIntent *)intent;
 + (void)finish:(SPIntent *)intent;
 
 @end
