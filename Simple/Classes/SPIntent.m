@@ -64,17 +64,14 @@
 -(void)parserUrlType{
     id type = [self.params objectForKey:TypeKey];
     id activityType = [self.params objectForKey:ActivityTypeKey];
-    id serviceType = [self.params objectForKey:ServiceTypeKey];
-    
+
     if ([type isKindOfClass:[NSString class]] || [type isKindOfClass:[NSNumber class]]) {
         self.type = [type intValue];
     }
     if ([activityType isKindOfClass:[NSString class]] || [activityType isKindOfClass:[NSNumber class]]) {
         self.actType = [activityType intValue];
     }
-    if ([serviceType isKindOfClass:[NSString class]] || [serviceType isKindOfClass:[NSNumber class]]) {
-        self.serviceType = [activityType intValue];
-    }
+
 }
 #pragma mark - Setter and Getter
 

@@ -9,6 +9,11 @@
 #import "SPUIManager.h"
 
 #import "SPErrorManager.h"
+#import "NSObject+SPRouter.h"
+
+@interface SPUIManager()<UINavigationControllerDelegate>
+@property (nonatomic,strong)SPBaseTransition *transition;
+@end
 
 @implementation SPUIManager
 
@@ -21,43 +26,62 @@
     return _sharedInstance;
 }
 
+#pragma mark - Public
 -(void)pushViewController:(UIViewController *)controller animated: (BOOL)flag {
-    if (!controller || ![controller isKindOfClass:[UIViewController class]]) {
+    if (![self prePushOrPresent:controller isPush:YES]) {
         return;
-    }
-    
-    if (!self.topViewController) {
-        return;
-    }
-    
-    if (self.topViewController.presentedViewController) {
-        [self.topViewController.presentedViewController dismissViewControllerAnimated:NO completion:nil];
     }
     
     if (self.topViewController.navigationController) {
-        [self.topViewController.navigationController pushViewController:controller animated:YES];
+        if (controller.intent.transitionType==Transition_Custom) {
+            self.topViewController.navigationController.delegate = self;
+            self.transition = controller.intent.transition;
+        }
+        [self.topViewController.navigationController pushViewController:controller animated:flag];
     }else{//如果当前展示的页面没有NAVGATIONCONTROLLER的时候
         UINavigationController *nav = [[UINavigationController alloc]initWithRootViewController:controller];
+        if (controller.intent.transitionType==Transition_Custom) {
+           nav.delegate = self;
+            self.transition = controller.intent.transition;
+        }
         [self.topViewController presentViewController:nav animated:flag completion:nil];
     }
 }
 
 -(void)presentViewController:(UIViewController *)controller animated: (BOOL)flag {
-    if (!controller || ![controller isKindOfClass:[UIViewController class]]) {
+    if (![self prePushOrPresent:controller isPush:NO]) {
         return;
     }
     
-    if (!self.topViewController) {
-        return;
-    }
-    
-    if (self.topViewController.presentedViewController) {
-        [self.topViewController.presentedViewController dismissViewControllerAnimated:NO  completion:nil];
+    if (controller.intent.transitionType==Transition_Custom) {
+        self.transition = controller.intent.transition;
+        [self.topViewController setTransitioningDelegate:self.transition];
     }
     
     [self.topViewController presentViewController:controller animated:flag completion:nil];
 }
 
+#pragma mark - Private
+-(BOOL)prePushOrPresent:(UIViewController *)controller isPush:(BOOL)isPush{
+    if (!controller || ![controller isKindOfClass:[UIViewController class]]) {
+        NSError *error = [NSError errorWithDomain:@"com.simple.jump" code:ERROR_NO_TOJUMPVIEWCONTRLLER userInfo:nil];
+        [self.rootViewController presentViewController:[SPErrorManager errorViewControllerForError:error] animated:YES completion:nil];
+        return NO;
+    }
+    
+    if (!self.topViewController) {
+        NSError *error = [NSError errorWithDomain:@"com.simple.jump" code:ERROR_NO_TOPVIEWCONTRLLER userInfo:nil];
+        [self.rootViewController presentViewController:[SPErrorManager errorViewControllerForError:error] animated:YES completion:nil];
+        return NO;
+    }
+    
+    if (self.topViewController.presentedViewController) {
+        [self.topViewController.presentedViewController dismissViewControllerAnimated:NO completion:nil];
+    }
+    return YES;
+}
+
+#pragma mark - Getter
 -(UIViewController *)topViewController{
     if (!_topViewController) {
         _topViewController = [self topViewController];//如果viewcontroller为空的情况，才会走这里
@@ -66,6 +90,12 @@
     return _topViewController;
 }
 
+-(UIViewController *)rootViewController{
+    if (!_rootViewController) {
+        _rootViewController = [UIApplication sharedApplication].keyWindow.rootViewController;
+    }
+    return _rootViewController;
+}
 //仅仅满足主流TABBAR 和 NAVGATION的框架
 - (UIViewController *)topmostViewController
 {
@@ -114,6 +144,19 @@
             return rootNavController.presentedViewController;
         }
         return rootNavController;
+    }
+}
+
+#pragma mark - UINavigationControllerDelegate
+//用来自定义转场动画
+- (id <UIViewControllerAnimatedTransitioning>)navigationController:(UINavigationController *)navigationController
+                                   animationControllerForOperation:(UINavigationControllerOperation)operation
+                                                fromViewController:(UIViewController *)fromVC
+                                                  toViewController:(UIViewController *)toVC{
+    if (operation == UINavigationControllerOperationPop) {
+        return self.transition;
+    }else{
+        return nil;
     }
 }
 

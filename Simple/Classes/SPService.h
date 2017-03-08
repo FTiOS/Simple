@@ -20,7 +20,7 @@
 
 -(void)bindService;
 -(void)unbindService;
--(void)send:(NSInteger)startId;
+-(void)send:(NSString *)action withParamerters:(NSDictionary *)parmas;
 
 //执行完成,调用
 -(void)onStartCommand:(SPIntent *)intent finished:(BOOL)finished;
@@ -32,7 +32,7 @@
 
 @required
 //开始执行回调,需要执行的代码都在这里实现
--(void)onStart:(BOOL)started startId:(NSInteger)startId;
+-(void)onStart:(NSString *)action paramerters:(NSDictionary *)parmas;
 
 @optional
 //创建时的回调
@@ -41,6 +41,7 @@
 -(void)onDestroy;
 //取消绑定是的回调
 -(Boolean)onUnbind;
+
 @end
 
 //服务管理中心
