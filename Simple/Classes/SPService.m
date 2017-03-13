@@ -15,6 +15,7 @@
 -(instancetype)init{
     self = [super init];
     if (self) {
+        self.bindCount = 1;
         [self onCreate];
     }
     return self;
@@ -34,10 +35,6 @@
     }
     [[SPServiceCenter shareedServiceCenter]unbindService:self];
     
-    if (self.intent) {
-        self.intent.sufCaller(self.intent,nil,0);
-    }
-    
     isHandling = NO;
     
 }
@@ -52,19 +49,23 @@
     }
 }
 
--(void)send:(NSInteger)startId{
+-(void)send:(NSString *)action withParamerters:(NSDictionary *)parmas{
     [self startService:startId];
 }
 
--(void)startService:(NSInteger)startId{
+-(void)startService::(NSString *)action withParamerters:(NSDictionary *)parmas{
     if (self.intent && !isHandling) {
         BOOL isStart = self.intent.preCaller(self.intent);
         if (isStart) {
-            [self onStart:isStart startId:startId];
+            [self onStart:action startId:parmas];
             isHandling = YES;
         }else{
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"服务前回调返回No"                                                                      forKey:NSLocalizedDescriptionKey];
             NSError *error = [NSError errorWithDomain:@"service.error" code:-1 userInfo:userInfo];
+            
+            if (self.intent) {
+                self.intent.sufCaller(self.intent,error,YES);
+            }
         }
     }else{
         NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"服务执行错误"                                                                      forKey:NSLocalizedDescriptionKey];
@@ -80,6 +81,10 @@
         }
         
         NSError *error = [NSError errorWithDomain:@"service.error" code:code userInfo:userInfo];
+        
+        if (self.intent) {
+            self.intent.sufCaller(self.intent,error,YES);
+        }
     }
 }
 
