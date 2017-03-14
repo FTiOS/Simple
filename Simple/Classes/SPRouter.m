@@ -49,6 +49,7 @@
                 case Service:{
                     SPService *service = [spModule serviceRunWithIntent:intent];
                     service.intent = intent;
+                    [service bindService];
                     [service send:intent.action withParamerters:intent.params];
                 }
                     break;
@@ -85,7 +86,10 @@
 }
 
 +(void)finish:(SPIntent *)intent{
-    if (intent && intent.type == Activity) {
+    if (!intent) {
+        return;
+    }
+    if (intent.type == Activity) {
         intent.sufCaller(intent,nil,0);
     }
 }

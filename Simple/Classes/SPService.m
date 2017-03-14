@@ -13,16 +13,24 @@
 }
 
 -(instancetype)init{
-    self = [super init];
-    if (self) {
-        self.bindCount = 1;
+    SPService *service = [[SPServiceCenter shareedServiceCenter].serviceMap objectForKey:NSStringFromClass([self class])];
+    if (service) {
+        self = service;
+    }else{
+        self = [super init];
         [self onCreate];
+    }
+    
+    if (self) {
+        if (self.bindCount == 0) {
+             self.bindCount = 1;
+        }
     }
     return self;
 }
 
 -(void)startService{
-    [self startService:0];
+    [self startService:self.intent.action withParamerters:self.intent.params];
 }
 
 -(void)stopService{
@@ -31,12 +39,10 @@
     }
     if (self.bindCount == 1) {
         [self onDestroy];
-        isHandling = NO;
     }
     [[SPServiceCenter shareedServiceCenter]unbindService:self];
     
     isHandling = NO;
-    
 }
 
 -(void)bindService{
@@ -50,14 +56,14 @@
 }
 
 -(void)send:(NSString *)action withParamerters:(NSDictionary *)parmas{
-    [self startService:startId];
+    [self startService:action withParamerters:parmas];
 }
 
--(void)startService::(NSString *)action withParamerters:(NSDictionary *)parmas{
+-(void)startService:(NSString *)action withParamerters:(NSDictionary *)parmas{
     if (self.intent && !isHandling) {
         BOOL isStart = self.intent.preCaller(self.intent);
         if (isStart) {
-            [self onStart:action startId:parmas];
+            [self onStart:action paramerters:parmas];
             isHandling = YES;
         }else{
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"服务前回调返回No"                                                                      forKey:NSLocalizedDescriptionKey];
@@ -90,21 +96,20 @@
 
 
 //执行完成,调用
--(void)onStartCommand:(SPIntent *)intent finished:(BOOL)finished{
-    isHandling = YES;
-    if (self.intent) {
-        self.intent.sufCaller(self.intent,nil,finished);
-        
-        if (finished) {
-            [self stopService];
-        }
+-(void)onFinishCommand:(BOOL)finished intent:(SPIntent *)intent{
+    if (!intent) {
+        intent = self.intent;
+    }
+    
+    self.intent.sufCaller(intent,nil,finished);
+    
+    if (finished) {
+        [self stopService];
     }
 }
 @end
 
-@interface SPServiceCenter()
-@property (nonatomic,strong)NSMutableDictionary *serviceMap;
-@end
+
 @implementation SPServiceCenter
 
 static id _sharedInstance = nil;
@@ -135,14 +140,16 @@ static dispatch_once_t oncePredicate;
             [self.serviceMap removeObjectForKey:key];
             service.bindCount = 0;
         }
-        
     }
 }
+
 -(NSMutableDictionary *)serviceMap{
     if (!_serviceMap) {
         _serviceMap = [NSMutableDictionary new];
     }
     return _serviceMap;
 }
+
+
 @end
 

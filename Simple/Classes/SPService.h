@@ -20,10 +20,11 @@
 
 -(void)bindService;
 -(void)unbindService;
+
 -(void)send:(NSString *)action withParamerters:(NSDictionary *)parmas;
 
 //执行完成,调用
--(void)onStartCommand:(SPIntent *)intent finished:(BOOL)finished;
+-(void)onFinishCommand:(BOOL)finished intent:(SPIntent *)intent;
 
 @end
 
@@ -46,7 +47,12 @@
 
 //服务管理中心
 @interface SPServiceCenter : NSObject<SPServiceDelegate>
+
+@property (nonatomic,strong)NSMutableDictionary *serviceMap;
+
+
 + (SPServiceCenter *)shareedServiceCenter;
 -(void)bindService:(SPService *)service;
 -(void)unbindService:(SPService *)service;
+
 @end
