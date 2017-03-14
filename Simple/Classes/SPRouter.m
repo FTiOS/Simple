@@ -38,6 +38,13 @@
     
 }
 
++ (void)startLoadUrlMapSettingsWithFilePath:(NSString *)filePath ServerUrl:(NSString *)serverUrl Params:(NSDictionary *)params{
+	[SPUrlMap shareMap].filePath = filePath;
+	[SPUrlMap shareMap].serverUrl = serverUrl;
+	[SPUrlMap shareMap].params = params;
+	[[SPUrlMap shareMap] loadSettings];
+}
+
 + (UIViewController *)start:(SPIntent *)intent{
     SPModuleModel *model = [[SPRouter shareSPRouter].urlMap moduleModleForKey:intent.URL.absoluteString];
     if (model.moduleClass) {

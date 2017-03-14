@@ -10,8 +10,6 @@
 #import "AFNetworking.h"
 #import "FMDatabase.h"
 
-static NSString const *LocalSettingsPath = @"SimpleUrl";
-static NSString const *LocalSettingsFileType = @"plist";
 static NSString const *DataBaseName = @"SpUrlModule.sqlite";
 static NSString const *TableName = @"t_url_module";
 static NSString const *ColumnUrl = @"url";
@@ -19,8 +17,6 @@ static NSString const *ColumnModuleClass = @"module";
 static NSString const *ColumnVersion = @"version";
 
 @implementation SPUrlMap
-
-BOOL isFinishLoadNetSettings;
 
 +(instancetype)shareMap{
     static id _sharedInstance = nil;
@@ -33,10 +29,35 @@ BOOL isFinishLoadNetSettings;
 
 #pragma mark - Public
 
+//配置完成后必须调用load完成加载
+-(void)loadSettings{
+	[self loadLocalSettings];
+	[self loadCacheSettings];
+	
+	__weak typeof(self) weakSelf = self;
+	
+	[self loadNetSettingsWithComplete:^(SPUrlMap *map) {
+		
+		[weakSelf updateCacheMap];
+		
+		for (SPModuleModel *model in weakSelf.localMap) {
+			[[SPUrlMap shareMap] setObject:model.moduleClass forKey:model.url];
+		}
+		for (SPModuleModel *model in weakSelf.tempMap) {
+			[[SPUrlMap shareMap] setObject:model.moduleClass forKey:model.url];
+		}
+		for (SPModuleModel *model in weakSelf.netMap) {
+			[[SPUrlMap shareMap] setObject:model.moduleClass forKey:model.url];
+		}
+		
+	} error:^(NSError *error) {
+		NSLog(@"Load netsettings failed!");
+	}];
+}
+
 //从plist文件或去本地配置
 -(void)loadLocalSettings{
-	NSString *fileName = [[NSBundle mainBundle]pathForResource:LocalSettingsPath ofType:LocalSettingsFileType];
-	NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:fileName];
+	NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:self.filePath];
 	for (NSString *str in [dic allKeys]) {
 		[self.localMap setObject:[dic objectForKey:str] forKey:str];
 	}
@@ -58,21 +79,20 @@ BOOL isFinishLoadNetSettings;
 }
 
 //请求接口获取网络配置
--(void)loadNetSettings{
+-(void)loadNetSettingsWithComplete:(void(^)(SPUrlMap *map))completeBlock error:(void(^)(NSError *error))errorBlock{
 	AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc]init];
 	manager.requestSerializer = [AFHTTPResponseSerializer serializer];
-	[manager GET:self.netMapUrl parameters:self.netMapDic success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+	[manager GET:self.serverUrl parameters:self.params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
 		NSLog(@"Get netMap succeed!");
 		for (NSDictionary *dic in [responseObject objectForKey:@"result"]) {
 			SPModuleModel *module = [[SPModuleModel alloc]init];
 			[module des:dic];
 			[self.netMap setObject:module.moduleClass forKey:module.url];
 		}
-		[self updateCacheMap];
-		isFinishLoadNetSettings = YES;
+		completeBlock(self.netMap);
 	} failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
 		NSLog(@"Get netMap failed!");
-		isFinishLoadNetSettings = YES;
+		errorBlock(error);
 	}];
 }
 
@@ -87,24 +107,6 @@ BOOL isFinishLoadNetSettings;
 			}else {
 				[db executeUpdate:@"insert into %@(%@,%@,%@) values(%@,%@,%@);",TableName,ColumnUrl,ColumnModuleClass,ColumnVersion,model.url,model.moduleClass,model.version];
 			}
-		}
-	}
-}
-
-//配置完成后必须调用load完成加载
--(void)loadSettings{
-	[self loadLocalSettings];
-	[self loadCacheSettings];
-	[self loadNetSettings];
-	if (isFinishLoadNetSettings) {
-		for (SPModuleModel *model in self.localMap) {
-			[[SPUrlMap shareMap] setObject:model.moduleClass forKey:model.url];
-		}
-		for (SPModuleModel *model in self.netMap) {
-			[[SPUrlMap shareMap] setObject:model.moduleClass forKey:model.url];
-		}
-		for (SPModuleModel *model in self.tempMap) {
-			[[SPUrlMap shareMap] setObject:model.moduleClass forKey:model.url];
 		}
 	}
 }
