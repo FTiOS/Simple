@@ -14,6 +14,7 @@
 -(void)des:(NSDictionary *)data{
     NSString *url = [data objectForKey:UrlKey];
     NSString *moduleName = [data objectForKey:ModuleKey];
+	NSString *version = [data objectForKey:VersionKey];
 }
 
 @end

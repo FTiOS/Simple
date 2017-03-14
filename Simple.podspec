@@ -40,5 +40,6 @@ TODO: Add long description of the pod here.
   # s.frameworks = 'UIKit', 'MapKit'
   s.dependency 'AFNetworking', '~> 3.1.0'
   s.dependency 'Aspects', '~> 1.4.1'
-
+  s.dependency 'FMDB', '~> 2.6.2'
+	
 end
