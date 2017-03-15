@@ -19,13 +19,7 @@
  **/
 + (void)initSDKEnviromentWithComplection:(void (^)(void))complection;
 
-/**
- * 配置组件
- * @param filePath router
- * @param serverUrl the default settings
- * @param params the default settings
- **/
-+ (void)startLoadUrlMapSettingsWithFilePath:(NSString *)filePath ServerUrl:(NSString *)serverUrl Params:(NSDictionary *)params;
++ (void)startLoadUrlMapSettings;
 
 + (UIViewController *)start:(SPIntent *)intent;
 + (void)finish:(SPIntent *)intent;

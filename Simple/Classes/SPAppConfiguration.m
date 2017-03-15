@@ -14,6 +14,8 @@
 @property (nonatomic, strong) NSString * appName;
 @property (nonatomic, strong) NSString * appVersion;
 @property (nonatomic, strong) NSString * settingPath;
+@property (nonatomic, strong) NSString * appBaseUrl;
+@property (nonatomic, strong) NSString * urlMapSettingsFilePath;
 
 @end
 
@@ -59,13 +61,36 @@
     [SPAppConfiguration sharedConfiguration].appVersion = appVersion;
 }
 
-+ (NSString *)settingsFilePath{
++ (NSString *)settingsFilePath
+{
     NSString *filePath = [[NSBundle mainBundle] pathForResource:@"main" ofType:@"js"];
     return [SPAppConfiguration sharedConfiguration].settingPath ?: filePath;
 }
 
-+ (void)setSettingsFilePath:(NSString *)filePath{
++ (void)setSettingsFilePath:(NSString *)filePath
+{
     [SPAppConfiguration sharedConfiguration].settingPath = filePath;
+}
+
++ (NSString *)appBaseUrl
+{
+	return [SPAppConfiguration sharedConfiguration].appBaseUrl;
+}
+
++ (void)setAppBaseUrl:(NSString *)appBaseUrl
+{
+	[SPAppConfiguration sharedConfiguration].appBaseUrl = appBaseUrl;
+}
+
++ (NSString *)urlMapSettingsFilePath
+{
+	NSString *filePath = [[NSBundle mainBundle] pathForResource:@"simple" ofType:@"plist"];
+	return [SPAppConfiguration sharedConfiguration].urlMapSettingsFilePath ?: filePath;
+}
+
++ (void)seturlMapSettingsFilePath:(NSString *)filePath
+{
+	[SPAppConfiguration sharedConfiguration].urlMapSettingsFilePath = filePath;
 }
 
 @end

@@ -38,10 +38,7 @@
     
 }
 
-+ (void)startLoadUrlMapSettingsWithFilePath:(NSString *)filePath ServerUrl:(NSString *)serverUrl Params:(NSDictionary *)params{
-	[SPUrlMap shareMap].filePath = filePath;
-	[SPUrlMap shareMap].serverUrl = serverUrl;
-	[SPUrlMap shareMap].params = params;
++ (void)startLoadUrlMapSettings{
 	[[SPUrlMap shareMap] loadSettings];
 }
 

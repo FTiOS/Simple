@@ -9,6 +9,7 @@
 #import "SPUrlMap.h"
 #import "AFNetworking.h"
 #import "FMDatabase.h"
+#import "SPAppConfiguration.h"
 
 static NSString const *DataBaseName = @"SpUrlModule.sqlite";
 static NSString const *TableName = @"t_url_module";
@@ -57,7 +58,7 @@ static NSString const *ColumnVersion = @"version";
 
 //从plist文件或去本地配置
 -(void)loadLocalSettings{
-	NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:self.filePath];
+	NSDictionary *dic = [NSDictionary dictionaryWithContentsOfFile:[SPAppConfiguration urlMapSettingsFilePath]];
 	for (NSString *str in [dic allKeys]) {
 		[self.localMap setObject:[dic objectForKey:str] forKey:str];
 	}
@@ -82,7 +83,7 @@ static NSString const *ColumnVersion = @"version";
 -(void)loadNetSettingsWithComplete:(void(^)(SPUrlMap *map))completeBlock error:(void(^)(NSError *error))errorBlock{
 	AFHTTPSessionManager *manager = [[AFHTTPSessionManager alloc]init];
 	manager.requestSerializer = [AFHTTPResponseSerializer serializer];
-	[manager GET:self.serverUrl parameters:self.params success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
+	[manager GET:[SPAppConfiguration appBaseUrl] parameters:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
 		NSLog(@"Get netMap succeed!");
 		for (NSDictionary *dic in [responseObject objectForKey:@"result"]) {
 			SPModuleModel *module = [[SPModuleModel alloc]init];

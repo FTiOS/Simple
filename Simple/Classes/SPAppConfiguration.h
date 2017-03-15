@@ -34,5 +34,17 @@
 + (NSString *)settingsFilePath;
 + (void)setSettingsFilePath:(NSString *)filePath;
 
+/**
+ * @abstract BaseUrl of your app, default is nil.
+ */
++ (NSString *)appBaseUrl;
++ (void)setAppBaseUrl:(NSString *)appBaseUrl;
+
+
+/**
+ * @abstract file path of your UrlMap settings, default is value for @"simple.plist" in main bundle.
+ */
++ (NSString *)urlMapSettingsFilePath;
++ (void)seturlMapSettingsFilePath:(NSString *)filePath;
 
 @end
