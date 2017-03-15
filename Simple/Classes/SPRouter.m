@@ -38,7 +38,14 @@
     
 }
 
-+ (void)start:(SPIntent *)intent{
++ (void)startLoadUrlMapSettingsWithFilePath:(NSString *)filePath ServerUrl:(NSString *)serverUrl Params:(NSDictionary *)params{
+	[SPUrlMap shareMap].filePath = filePath;
+	[SPUrlMap shareMap].serverUrl = serverUrl;
+	[SPUrlMap shareMap].params = params;
+	[[SPUrlMap shareMap] loadSettings];
+}
+
++ (UIViewController *)start:(SPIntent *)intent{
     SPModuleModel *model = [[SPRouter shareSPRouter].urlMap moduleModleForKey:intent.URL.absoluteString];
     if (model.moduleClass) {
         id module = [[model.moduleClass alloc]init];
@@ -49,7 +56,6 @@
                 case Service:{
                     SPService *service = [spModule serviceRunWithIntent:intent];
                     service.intent = intent;
-                    [service bindService];
                     [service send:intent.action withParamerters:intent.params];
                 }
                     break;
@@ -73,21 +79,20 @@
                 }
                     break;
                 default:{
-                    //UIViewController *activity = [spModule activityHanldeWithIntent:intent];
-                    //activity.intent = intent;
-                    //return activity;
+                    UIViewController *activity = [spModule activityHanldeWithIntent:intent];
+                    activity.intent = intent;
+                    return activity;
                 }
                     break;
             }
         }
     }
+    
+    return nil;
 }
 
 +(void)finish:(SPIntent *)intent{
-    if (!intent) {
-        return;
-    }
-    if (intent.type == Activity) {
+    if (intent && intent.type == Activity) {
         intent.sufCaller(intent,nil,0);
     }
 }
