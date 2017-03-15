@@ -38,7 +38,7 @@
     
 }
 
-+ (UIViewController *)start:(SPIntent *)intent{
++ (void)start:(SPIntent *)intent{
     SPModuleModel *model = [[SPRouter shareSPRouter].urlMap moduleModleForKey:intent.URL.absoluteString];
     if (model.moduleClass) {
         id module = [[model.moduleClass alloc]init];
@@ -73,16 +73,14 @@
                 }
                     break;
                 default:{
-                    UIViewController *activity = [spModule activityHanldeWithIntent:intent];
-                    activity.intent = intent;
-                    return activity;
+                    //UIViewController *activity = [spModule activityHanldeWithIntent:intent];
+                    //activity.intent = intent;
+                    //return activity;
                 }
                     break;
             }
         }
     }
-    
-    return nil;
 }
 
 +(void)finish:(SPIntent *)intent{
