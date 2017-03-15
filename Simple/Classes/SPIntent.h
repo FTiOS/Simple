@@ -22,6 +22,7 @@ typedef NS_ENUM(NSInteger,Type) {
     Service = 0,//不需要展示页面的服务，开始异步执行服务
     Activity = 1,//需要展示页面的活动,跳转
     Model = 2,//返回URL对应的对象，不执行任何操作
+    Block = 3,//执行对应的block
 };
 
 //组件活动跳转的类型
